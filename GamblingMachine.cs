@@ -34,6 +34,9 @@ namespace GamblingMachine
 
         private void LoadAssetBundle() // basically its work
         {
+            // could also be something like, 
+            // string bundlePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"slotbundle.machine");
+
             string bundlePath = Path.Combine(Paths.PluginPath, "Lluciocc-GamblingMachine", "slotbundle.machine");
             AssetBundle bundle = AssetBundle.LoadFromFile(bundlePath);
 

@@ -6,6 +6,7 @@
 
 <a href="https://thunderstore.io/c/repo/p/Lluciocc/GamblingMachine">❤️ **Download now**</a>
 
+# Infos
 - 💎 You can now **Gamble** in shop with a new machine ! 💎
 
 ## Feature 🎰🎲♠

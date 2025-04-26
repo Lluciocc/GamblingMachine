@@ -17,7 +17,11 @@ public class GamblingMachineScript : MonoBehaviour
 
     private bool isSpinning = false;
 
-    private int prixMachine = 2;
+    // gameplay
+    private int prixMachine = GamblingMachine.bet.Value;
+    private float winrate = GamblingMachine.winrate.Value;
+
+    private float winMulti = GamblingMachine.winMultiplicator.Value;
     private Light lightComponent;
     
 
@@ -126,7 +130,7 @@ public class GamblingMachineScript : MonoBehaviour
     {
         isSpinning = true;
 
-        bool isJackpot = Random.value < 0.5f; 
+        bool isJackpot = Random.value < winrate; 
 
         float finalXRotation = isJackpot ? Random.Range(0f, 360f) : 0f;
 
@@ -146,7 +150,7 @@ public class GamblingMachineScript : MonoBehaviour
         if (isJackpot)
         {
             PlaySound(jackpotClip);
-            SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() + 4);
+            SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() + Mathf.RoundToInt(prixMachine * winMulti));
         }
         else
         {
@@ -169,53 +173,6 @@ public class GamblingMachineScript : MonoBehaviour
 
         Vector3 currentRotation = reel.transform.localEulerAngles;
         reel.transform.localEulerAngles = new Vector3(endRotation, currentRotation.y, currentRotation.z);
-    }
-
-    public static void ApplyRandomUpgrades(string steamID, int count)
-    {
-        int totalUpgrades = 9;
-        List<int> availableIndexes = new List<int>();
-
-        for (int i = 0; i < totalUpgrades; i++)
-            availableIndexes.Add(i);
-
-        for (int i = 0; i < count && availableIndexes.Count > 0; i++)
-        {
-            int randIdx = UnityEngine.Random.Range(0, availableIndexes.Count);
-            int upgradeIndex = availableIndexes[randIdx];
-
-            switch (upgradeIndex)
-            {
-                case 0:
-                    PunManager.instance.UpgradeMapPlayerCount(steamID);
-                    break;
-                case 1:
-                    PunManager.instance.UpgradePlayerEnergy(steamID);
-                    break;
-                case 2:
-                    PunManager.instance.UpgradePlayerExtraJump(steamID);
-                    break;
-                case 3:
-                    PunManager.instance.UpgradePlayerGrabRange(steamID);
-                    break;
-                case 4:
-                    PunManager.instance.UpgradePlayerGrabStrength(steamID);
-                    break;
-                case 5:
-                    PunManager.instance.UpgradePlayerThrowStrength(steamID);
-                    break;
-                case 6:
-                    PunManager.instance.UpgradePlayerHealth(steamID);
-                    break;
-                case 7:
-                    PunManager.instance.UpgradePlayerSprintSpeed(steamID);
-                    break;
-                case 8:
-                    PunManager.instance.UpgradePlayerTumbleLaunch(steamID);
-                    break;
-            }
-        availableIndexes.RemoveAt(randIdx);
-        }
     }
     private void PlaySound(AudioClip clip)
     {

@@ -51,7 +51,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Lluciocc")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae4e0f183cd30b7c965d33152351fc3fd2a0bf2c")]
 [assembly: System.Reflection.AssemblyProductAttribute("GamblingMachine")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GamblingMachine")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

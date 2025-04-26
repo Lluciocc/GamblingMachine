@@ -15,7 +15,8 @@
           "Linkoid.Repo.Plugin.Build": "0.2.2",
           "R.E.P.O.GameLibs.Steam": "0.1.2-ngd.0",
           "UnityEngine.Modules": "2022.3.21",
-          "Zehs.REPOLib": "2.0.1"
+          "Zehs.REPOLib": "2.0.1",
+          "REPOConfig": "1.2.0.0"
         },
         "runtime": {
           "GamblingMachine.dll": {}
@@ -386,6 +387,14 @@
             "fileVersion": "2.0.1.0"
           }
         }
+      },
+      "REPOConfig/1.2.0.0": {
+        "runtime": {
+          "REPOConfig.dll": {
+            "assemblyVersion": "1.2.0.0",
+            "fileVersion": "1.2.0.0"
+          }
+        }
       }
     }
   },
@@ -695,6 +704,11 @@
       "sha512": "sha512-dp7DaRm4WHe3NeSxYKxgcGBrfg5V59+XUnwhwf8vajQ+w7E4ccM8qLao2MXr0Aq/edYRiEjYJYocAskXnaG4Mg==",
       "path": "zehs.repolib/2.0.1",
       "hashPath": "zehs.repolib.2.0.1.nupkg.sha512"
+    },
+    "REPOConfig/1.2.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

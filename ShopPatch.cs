@@ -5,24 +5,25 @@ using Object = UnityEngine.Object;
 
 namespace GamblingMachine
 {
-
-
     [HarmonyPatch(typeof(ShopManager), "ShopInitialize")]
     public  class ShopPatch
     {
         public int playerId;
+        private static bool debug = GamblingMachine.debug.Value;
         static void Postfix(ShopManager __instance)
         {
             if (GamblingMachine.SlotMachinePrefab == null)
             {
-                GamblingMachine.Logger.LogWarning("SlotMachinePrefab is null !");
+                if (debug)
+                    GamblingMachine.Logger.LogWarning("SlotMachinePrefab is null !");
                 return;
             }
 
             GameObject target = GameObject.Find("Shop Magazine Holder");
             if (target == null)
             {
-                GamblingMachine.Logger.LogWarning("Obj named 'Shop Magazine Holder' not found !");
+                if (debug)
+                    GamblingMachine.Logger.LogWarning("Obj named 'Shop Magazine Holder' not found !");
                 return;
             }
 
@@ -44,6 +45,7 @@ namespace GamblingMachine
                 {
                     machine = Object.Instantiate(GamblingMachine.SlotMachinePrefab, pos, rot, parent);
                 }
+                //machine.transform.localPosition = machine.transform.localPosition + new Vector3(-0.3f,0,0);
                 machine.tag = "Phys Grab Object";
                 machine.layer = LayerMask.NameToLayer("PhysGrabObject");
 
@@ -90,7 +92,8 @@ namespace GamblingMachine
                 }
                 else
                 {
-                    GamblingMachine.Logger.LogWarning("No players are grabbing the object.");
+                    if (debug)
+                        GamblingMachine.Logger.LogWarning("No players are grabbing the object.");
                 }
 
                 if (slotScript != null)
@@ -116,7 +119,8 @@ namespace GamblingMachine
             else
             {
                 target.SetActive(false);
-                GamblingMachine.Logger.LogInfo("Client non-host : objet désactivé.");
+                if (debug)
+                    GamblingMachine.Logger.LogInfo("Client non-host : objet désactivé.");
             }
         }
 

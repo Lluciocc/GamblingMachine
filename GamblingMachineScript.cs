@@ -22,9 +22,10 @@ public class GamblingMachineScript : MonoBehaviour
     private float winrate = GamblingMachine.winrate.Value;
 
     private float winMulti = GamblingMachine.winMultiplicator.Value;
+    private bool debug = GamblingMachine.debug.Value;
+
     private Light lightComponent;
     
-
     private AudioClip spinClip;
     private AudioClip jackpotClip;
     private AudioClip looseClip;
@@ -80,7 +81,8 @@ public class GamblingMachineScript : MonoBehaviour
             {
                 AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
                 onLoaded?.Invoke(clip);
-                //Debug.Log("Loaded clip from: " + path);
+                if (debug)
+                    Debug.Log("Loaded clip from: " + path);
             }
         }
     }

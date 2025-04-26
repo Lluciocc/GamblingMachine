@@ -65,7 +65,7 @@ namespace GamblingMachine
 
             if (SlotMachinePrefab == null)
             {
-                Logger.LogError("Prefab 'machine' is unknow in the bundle !");
+                Logger.LogError("Prefab 'machine' is unknown in the bundle !");
                 return;
             }
 

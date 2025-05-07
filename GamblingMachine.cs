@@ -7,13 +7,11 @@ using REPOLib.Modules;
 using System.Reflection;
 using BepInEx.Configuration;
 using REPOConfig;
-using UnityEngine.Animations;
-
-
+using REPOLib;
 
 namespace GamblingMachine
 {
-    [BepInPlugin("Lluciocc.GamblingMachine", "GamblingMachine", "1.0")]
+    [BepInPlugin("Lluciocc.GamblingMachine", "GamblingMachine", MyPluginInfo.PLUGIN_VERSION)]
     [BepInDependency(REPOLib.MyPluginInfo.PLUGIN_GUID, BepInDependency.DependencyFlags.HardDependency)]
 
     public class GamblingMachine : BaseUnityPlugin
@@ -21,7 +19,6 @@ namespace GamblingMachine
         internal static GamblingMachine Instance { get; private set; } = null!;
         internal new static ManualLogSource Logger => Instance._logger;
         private ManualLogSource _logger => base.Logger;
-
         internal Harmony? Harmony { get; set; }
         public static GameObject SlotMachinePrefab { get; private set; } = null!;
 

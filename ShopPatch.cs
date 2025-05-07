@@ -52,7 +52,7 @@ namespace GamblingMachine
                 machine.tag = "Phys Grab Object";
                 machine.layer = LayerMask.NameToLayer("PhysGrabObject");
 
-                var colliderHolderTransform = machine.transform.FindDeepChild("ColliderHolder");
+                var colliderHolderTransform = machine.transform.FindDeepInChild("ColliderHolder");
                 if (colliderHolderTransform == null)
                 {
                     GamblingMachine.Logger.LogWarning("ColliderHolder not found !");
@@ -75,10 +75,10 @@ namespace GamblingMachine
                 if (slotScript != null)
                 {
                     GameObject[] reels = new GameObject[4];
-                    reels[0] = machine.transform.FindDeepChild("reel 1").gameObject;
-                    reels[1] = machine.transform.FindDeepChild("reel 2").gameObject;
-                    reels[2] = machine.transform.FindDeepChild("reel 3").gameObject;
-                    reels[3] = machine.transform.FindDeepChild("reel 4").gameObject;
+                    reels[0] = machine.transform.FindDeepInChild("reel 1").gameObject;
+                    reels[1] = machine.transform.FindDeepInChild("reel 2").gameObject;
+                    reels[2] = machine.transform.FindDeepInChild("reel 3").gameObject;
+                    reels[3] = machine.transform.FindDeepInChild("reel 4").gameObject;
                     slotScript.reels = reels;
 
                     newGrabArea.grabAreaEventOnStart.AddListener(slotScript.Spin);
@@ -89,8 +89,8 @@ namespace GamblingMachine
                     GamblingMachine.Logger.LogWarning("GamblingMachineScript script not found !");
                 }
 
-                GameObject BetAmountText = machine.transform.FindDeepChild("TMPTextBet").gameObject;
-                GameObject BetMultiplicatorText = machine.transform.FindDeepChild("TMPTextMulti").gameObject;
+                GameObject BetAmountText = machine.transform.FindDeepInChild("TMPTextBet").gameObject;
+                GameObject BetMultiplicatorText = machine.transform.FindDeepInChild("TMPTextMulti").gameObject;
 
                 TextMeshPro tmp1 = BetAmountText.GetComponent<TextMeshPro>();
                 TextMeshPro tmp2 = BetMultiplicatorText.GetComponent<TextMeshPro>();

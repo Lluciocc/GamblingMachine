@@ -60,7 +60,7 @@ public class GamblingMachineScript : MonoBehaviour
 
         StartCoroutine(LoadAudioClips());
 
-        GameObject? lightObj = machine.transform.FindDeepChild("Light")?.gameObject;
+        GameObject? lightObj = machine.transform.FindDeepInChild("Light")?.gameObject;
         if (lightObj != null)
         {
             lightComponent = lightObj.GetComponent<Light>();

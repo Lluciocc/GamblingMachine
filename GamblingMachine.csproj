@@ -5,7 +5,7 @@
     <LangVersion>11</LangVersion>
     <Nullable>enable</Nullable>
     <Authors>Lluciocc</Authors>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <!-- Add Package Sources -->
@@ -31,6 +31,8 @@
     <PackageReference Include="R.E.P.O.GameLibs.Steam" Version="*-*" PrivateAssets="all" Publicize="true" />
   </ItemGroup>
 
+  <!-- This reference is not included in the repository.
+  Please download it and place it in a folder named 'libs'. -->
   <ItemGroup>
     <Reference Include="REPOConfig">
       <HintPath>libs/REPOConfig.dll</HintPath>

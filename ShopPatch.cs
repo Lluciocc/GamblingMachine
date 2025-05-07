@@ -2,6 +2,8 @@ using HarmonyLib;
 using UnityEngine;
 using Photon.Pun;
 using Object = UnityEngine.Object;
+using TMPro;
+using UnityEngine.UI;
 
 namespace GamblingMachine
 {
@@ -10,6 +12,8 @@ namespace GamblingMachine
     {
         public int playerId;
         private static bool debug = GamblingMachine.debug.Value;
+        private static int bet = GamblingMachine.bet.Value;
+        private static float multi = GamblingMachine.winMultiplicator.Value;
         static void Postfix(ShopManager __instance)
         {
             if (GamblingMachine.SlotMachinePrefab == null)
@@ -45,33 +49,18 @@ namespace GamblingMachine
                 {
                     machine = Object.Instantiate(GamblingMachine.SlotMachinePrefab, pos, rot, parent);
                 }
-                //machine.transform.localPosition = machine.transform.localPosition + new Vector3(-0.3f,0,0);
                 machine.tag = "Phys Grab Object";
                 machine.layer = LayerMask.NameToLayer("PhysGrabObject");
 
-                // Collider 
-                GameObject colliderHolder = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                colliderHolder.name = "ColliderHolder";
-                colliderHolder.tag = "Grab Area";
-                colliderHolder.layer = LayerMask.NameToLayer("Ignore Raycast");
-                colliderHolder.transform.SetParent(machine.transform);
-                colliderHolder.transform.localPosition = new Vector3(-0.00598148257f, 0.086336486f, 0.00997269899f);
-                colliderHolder.transform.localScale = new Vector3(0.0783522129f, 0.172635332f, 0.101678953f);
+                var colliderHolderTransform = machine.transform.FindDeepChild("ColliderHolder");
+                if (colliderHolderTransform == null)
+                {
+                    GamblingMachine.Logger.LogWarning("ColliderHolder not found !");
+                    return;
+                }
+                GameObject colliderHolder = colliderHolderTransform.gameObject;
 
                 BoxCollider boxCollider = colliderHolder.GetComponent<BoxCollider>();
-                boxCollider.center = Vector3.zero;
-                boxCollider.size = Vector3.one;
-                boxCollider.isTrigger = true;
-
-                ApplyTransparentMaterial(colliderHolder);
-
-                // Lights
-                GameObject light = new GameObject("Light");
-                light.transform.SetParent(machine.transform);
-                light.transform.localPosition = new Vector3(0, 0.0738f, 0.0687f);
-                Light lightComponent = light.AddComponent<Light>();
-                lightComponent.color = Color.white;
-                lightComponent.intensity = 1.5f;
 
                 // Scripts
                 GamblingMachineScript slotScript = machine.GetComponent<GamblingMachineScript>() ?? machine.AddComponent<GamblingMachineScript>();
@@ -83,35 +72,31 @@ namespace GamblingMachine
                 newGrabArea.grabAreaTransform = colliderHolder.transform;
 
                 
-                if (staticGrabObject.playerGrabbing.Count > 0)
-                {
-
-                    int playerId = staticGrabObject.playerGrabbing[0].photonView.OwnerActorNr;
-
-                    slotScript.SetPlayerId(playerId);
-                }
-                else
-                {
-                    if (debug)
-                        GamblingMachine.Logger.LogWarning("No players are grabbing the object.");
-                }
-
                 if (slotScript != null)
                 {
                     GameObject[] reels = new GameObject[4];
-                    reels[0] = machine.transform.FindDeepChild("reel 1")?.gameObject;
-                    reels[1] = machine.transform.FindDeepChild("reel 2")?.gameObject;
-                    reels[2] = machine.transform.FindDeepChild("reel 3")?.gameObject;
-                    reels[3] = machine.transform.FindDeepChild("reel 4")?.gameObject;
+                    reels[0] = machine.transform.FindDeepChild("reel 1").gameObject;
+                    reels[1] = machine.transform.FindDeepChild("reel 2").gameObject;
+                    reels[2] = machine.transform.FindDeepChild("reel 3").gameObject;
+                    reels[3] = machine.transform.FindDeepChild("reel 4").gameObject;
                     slotScript.reels = reels;
+
+                    newGrabArea.grabAreaEventOnStart.AddListener(slotScript.Spin);
+                    grabArea.grabAreas.Add(newGrabArea);
                 }
                 else
                 {
                     GamblingMachine.Logger.LogWarning("GamblingMachineScript script not found !");
                 }
 
-                newGrabArea.grabAreaEventOnStart.AddListener(slotScript.Spin);
-                grabArea.grabAreas.Add(newGrabArea);
+                GameObject BetAmountText = machine.transform.FindDeepChild("TMPTextBet").gameObject;
+                GameObject BetMultiplicatorText = machine.transform.FindDeepChild("TMPTextMulti").gameObject;
+
+                TextMeshPro tmp1 = BetAmountText.GetComponent<TextMeshPro>();
+                TextMeshPro tmp2 = BetMultiplicatorText.GetComponent<TextMeshPro>();
+
+                if (tmp1 != null) tmp1.text = $"Bet amount: {bet}k";
+                if (tmp2 != null) tmp2.text = $"Bet multiplicator: x{multi:0.##}";
 
                 Object.Destroy(target);
                 GamblingMachine.Logger.LogInfo("GamblingMachine placed in shop !");
@@ -128,24 +113,6 @@ namespace GamblingMachine
         {
             go.transform.SetParent(parent);
             go.transform.localScale = Vector3.one;
-        }
-
-        static void ApplyTransparentMaterial(GameObject obj)
-        {
-            Material transparentMat = new Material(Shader.Find("Standard"));
-            transparentMat.color = new Color(0f, 0f, 0f, 0f);
-            transparentMat.SetFloat("_Mode", 3);
-            transparentMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            transparentMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            transparentMat.SetInt("_ZWrite", 0);
-            transparentMat.DisableKeyword("_ALPHATEST_ON");
-            transparentMat.EnableKeyword("_ALPHABLEND_ON");
-            transparentMat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-            transparentMat.renderQueue = 3000;
-
-            Renderer renderer = obj.GetComponent<Renderer>();
-            if (renderer != null)
-                renderer.material = transparentMat;
         }
     }
 }

@@ -21,3 +21,7 @@
 ### Via a Mod Manager
 - Simply download through your favorite mod manager.
 - Launch the game — you're good to go!
+
+## ©️ Credits
+- <a href='https://sketchfab.com/3d-models/slot-machine-aff86b4e07fe4a22bc1b6bc3fa91d662'>SlotMachine</a> model from <a href='https://sketchfab.com/deepakyhr'>deepakyhr</a> in Sketchfab
+- Sound from Pixabay and Soundsnap.

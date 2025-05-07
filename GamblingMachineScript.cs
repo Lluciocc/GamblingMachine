@@ -10,7 +10,7 @@ using Photon.Pun;
 namespace GamblingMachine;
 public class GamblingMachineScript : MonoBehaviour
 {
-    public GameObject[] reels;
+    public GameObject[]? reels;
 
     public float spinTimePerReel = 1.5f;
     public float rotationSpeed = 720f;
@@ -24,29 +24,43 @@ public class GamblingMachineScript : MonoBehaviour
     private float winMulti = GamblingMachine.winMultiplicator.Value;
     private bool debug = GamblingMachine.debug.Value;
 
-    private Light lightComponent;
+    private Light? lightComponent;
     
-    private AudioClip spinClip;
-    private AudioClip jackpotClip;
-    private AudioClip looseClip;
-    private AudioClip cancelClip;
+    private AudioClip? spinClip;
+    private AudioClip? jackpotClip;
+    private AudioClip? looseClip;
+    private AudioClip? cancelClip;
 
-    private string modPath;
-    private AudioSource audioSource;
+    private string? modPath;
+    private AudioSource? audioSource;
     private int playerId;
-    public GameObject machine;
 
-    void Start()
+    private void Start()
+    {
+        Init();
+    }
+
+    public void Init()
     {
         modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.spatialBlend = 1f; 
-        audioSource.volume = 0.5f; 
+        audioSource.volume = 0.5f;
+
+        GameObject machine = this.gameObject;
+
+
+        if (machine == null)
+        {
+            GamblingMachine.Logger.LogError("Machine GameObject is not assigned!");
+            return;
+        }
+
 
         StartCoroutine(LoadAudioClips());
 
-        GameObject lightObj = GameObject.Find("Light");
+        GameObject? lightObj = machine.transform.FindDeepChild("Light")?.gameObject;
         if (lightObj != null)
         {
             lightComponent = lightObj.GetComponent<Light>();
@@ -89,14 +103,23 @@ public class GamblingMachineScript : MonoBehaviour
 
     public void Spin()
     {
+        if (debug)
+            GamblingMachine.Logger.LogInfo("Spin() method called!");
+            
         if (SemiFunc.StatGetRunCurrency() >= prixMachine && !isSpinning)
         {
-            PlaySound(spinClip);
-            SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() - prixMachine);
-            StartCoroutine(SpinRoutine());
+            if (SemiFunc.IsMultiplayer()){
+                PhotonView photonView = PhotonView.Get(this);
+                photonView.RPC("RPC_StartSpin", RpcTarget.All);
+            }
+            else {
+                LOCAL_StartSpin();
+            }
         }
         else
         {
+            if (isSpinning)
+                return;
             PlaySound(cancelClip);
             StartCoroutine(NotEnoughMoney());
             GamblingMachine.Logger.LogWarning("Not enough money!");
@@ -104,6 +127,32 @@ public class GamblingMachineScript : MonoBehaviour
         }
     }
 
+    [PunRPC]
+    private void RPC_StartSpin()
+    {
+        if (isSpinning) return;
+
+        if (debug) 
+            Debug.Log("Spin With RPC");
+
+        SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() - prixMachine);
+        PlaySound(spinClip);
+        StartCoroutine(SpinRoutine());
+    }
+
+    
+    private void LOCAL_StartSpin()
+    {
+        if (isSpinning) return;
+
+        if (debug) 
+            Debug.Log("Spin With NO RPC");
+
+        SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() - prixMachine);
+        PlaySound(spinClip);
+        StartCoroutine(SpinRoutine());
+    }
+    
     private IEnumerator NotEnoughMoney()
     {
         if (lightComponent != null)
@@ -117,6 +166,25 @@ public class GamblingMachineScript : MonoBehaviour
             GamblingMachine.Logger.LogWarning("lightComponent not found!"); 
         }
     }
+
+    private IEnumerator JackpotLightEffect()
+    {
+        if (lightComponent != null)
+        {
+            Color original = lightComponent.color;
+            for (int i = 0; i < 4; i++)
+            {
+                lightComponent.color = Color.green;
+                yield return new WaitForSeconds(0.1f);
+                lightComponent.color = original;
+                yield return new WaitForSeconds(0.1f);
+            }
+        } else 
+        {
+            GamblingMachine.Logger.LogWarning("No lightComponent found !!");
+        }
+    }
+
 
     public void SetPlayerId(int id)
     {
@@ -152,12 +220,14 @@ public class GamblingMachineScript : MonoBehaviour
         if (isJackpot)
         {
             PlaySound(jackpotClip);
+            StartCoroutine(JackpotLightEffect());
             SemiFunc.StatSetRunCurrency(SemiFunc.StatGetRunCurrency() + Mathf.RoundToInt(prixMachine * winMulti));
         }
         else
         {
             PlaySound(looseClip);
-            GamblingMachine.Logger.LogWarning("BIG L");
+            if (debug)
+                GamblingMachine.Logger.LogWarning("BIG L");
         }
     }
     private IEnumerator RotateReel(GameObject reel, float duration, float endRotation)

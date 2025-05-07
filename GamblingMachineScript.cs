@@ -172,18 +172,32 @@ public class GamblingMachineScript : MonoBehaviour
         if (lightComponent != null)
         {
             Color original = lightComponent.color;
-            for (int i = 0; i < 4; i++)
+            Color[] colors = new Color[]
             {
-                lightComponent.color = Color.green;
-                yield return new WaitForSeconds(0.1f);
-                lightComponent.color = original;
-                yield return new WaitForSeconds(0.1f);
+                Color.red,
+                new Color(1f, 0.5f, 0f), // orange
+                Color.yellow,
+                Color.green,
+                Color.cyan,
+                Color.blue,
+                new Color(0.6f, 0f, 1f) // purple
+            };
+            for (int i = 0; i < 3; i++) // 3 times
+            {
+                foreach (Color c in colors)
+                {
+                    lightComponent.color = c;
+                    yield return new WaitForSeconds(0.1f);
+                }
             }
-        } else 
+            lightComponent.color = original;
+        }
+        else
         {
-            GamblingMachine.Logger.LogWarning("No lightComponent found !!");
+            GamblingMachine.Logger.LogWarning("No lightComponent found!");
         }
     }
+
 
 
     public void SetPlayerId(int id)
